@@ -1,6 +1,6 @@
 use crate::domain;
 
-use chrono::{DateTime, Utc};
+use chrono::{DateTime, NaiveDate, Utc};
 use serde::Serialize;
 use std::collections::HashMap;
 use std::sync::{Arc, Mutex, RwLock};
@@ -51,7 +51,7 @@ impl Identity {
         self.verify_password(&user.salt, &user.password, attempted_password)?;
 
         let hours = {
-            let now = Utc::now();
+            let now = NaiveDate::now();
             let expiration_date = user.password_expiration_date;
             let duration = expiration_date.signed_duration_since(now);
             duration.num_hours()
