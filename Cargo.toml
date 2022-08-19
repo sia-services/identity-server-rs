@@ -1,0 +1,48 @@
+[package]
+name = "identity-server-rs"
+version = "0.1.0"
+authors = ["Dmitri Astafiev <demius.md@gmail.com>"]
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+
+actix-web =  { version = "4", features = ["openssl"] }
+config = "0.13.2"
+dotenv = "0.15.0"
+futures-util = "0.3.23"
+
+env_logger = "0.9"
+log = "0.4"
+
+openssl = { version = "0.10", features = ["v110"] }
+
+# for postgres
+deadpool-postgres = { version = "0.10.2", features = ["serde"] }
+tokio-postgres = { version = "0.7.6", features = ["with-chrono-0_4"] }
+tokio-postgres-openssl = "0.1.0-rc.1"
+postgres-openssl = "0.5.0"
+
+# generate auth tokens
+[dependencies.uuid]
+version = "1.1.2"
+features = [
+    "v4",                # Lets you generate random UUIDs
+    "fast-rng",          # Use a faster (but still sufficiently random) RNG
+    "macro-diagnostics", # Enable better diagnostics for compile-time UUIDs
+    "serde"              # Enable serialize/deserialize
+]
+
+[profile.dev]
+opt-level = 0
+
+[profile.release]
+opt-level = 3
+lto = true        # Enable link Time Optimization
+panic = 'abort'   # Abort on panic
+codegen-units = 2 # Parallel Codegeneration (default: 16)
+
+## build for release: cargo build --release
+## for full minification (strip debug symbols):
+## strip target/release/server

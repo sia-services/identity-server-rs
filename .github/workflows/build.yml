@@ -1,0 +1,23 @@
+on: [push]
+
+name: Build & Pust to Docker
+
+jobs:
+  build_and_test:
+    name: Rust project
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+      - name: Build project
+        run: |
+          cargo build --release --all-features
+          ls -la .
+      - name: Create release tag-name
+        id: release-vars
+        run: |
+          echo ::set-output name=tag::$(date +'%y.%m.%d-%H%M')
+          echo ::set-output name=repo::$GITHUB_REPOSITORY
+          echo ::set-output name=name::${GITHUB_REPOSITORY////-}
