@@ -16,6 +16,18 @@ futures-util = "0.3.23"
 env_logger = "0.9"
 log = "0.4"
 
+ring = "0.16.20"        # generate password hash
+base64 = "0.13.0"       # endcode/decode password hash into/from Base64
+
+# serialize/deserialize
+serde = { version = "1.0.143", features = ["derive", "rc"] }
+
+# date and time
+chrono = { version = "0.4.22", features = ["serde"] }
+
+# for errors etc
+derive_more = "0.99.17"
+
 openssl = { version = "0.10", features = ["v110"] }
 
 # for postgres
