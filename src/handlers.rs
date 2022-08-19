@@ -1,8 +1,9 @@
 use crate::database::count_of_roles;
 use crate::errors::DatabaseError;
 
-use actix_web::{get, web, HttpResponse, Result};
+use actix_web::{get, post, web, HttpResponse, Result};
 use deadpool_postgres::Pool;
+use serde::Deserialize;
 
 #[get("/")]
 pub async fn hello(db_pool: web::Data<Pool>) -> Result<HttpResponse> {
@@ -28,8 +29,8 @@ pub struct UsernamePasswordCredentials {
 
 #[post("/login")]
 pub async fn login(
-    db_pool: Data<Pool>,
-    identity: Data<Identity>,
+    db_pool: web::Data<Pool>,
+    identity: web::Data<Identity>,
     credentials: web::Json<UsernamePasswordCredentials>,
 ) -> Result<impl Responder> {
     let client: Client = db_pool
@@ -51,7 +52,7 @@ pub async fn login(
 
 #[get("/info")]
 pub async fn auth_info(
-    auth_context: Option<ReqData<AuthenticattionInfoContext>>,
+    auth_context: Option<web::ReqData<AuthenticattionInfoContext>>,
 ) -> Result<impl Responder> {
     let auth_context = auth_context.ok_or(actix_web::error::ErrorInternalServerError(
         "Authentication info context not found in application",
@@ -64,7 +65,7 @@ pub async fn auth_info(
 
 #[post("/logout")]
 pub async fn logout(
-    identity: Data<Identity>,
+    identity: web::Data<Identity>,
     token_context: Option<ReqData<AuthTokenContext>>,
 ) -> Result<HttpResponse> {
     if token_context.is_none() {
