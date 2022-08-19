@@ -34,7 +34,7 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           builder: ${{ steps.buildx.outputs.name }}
-          context: build
+          context: .
           tags: |
             ghcr.io/${{ steps.release-vars.outputs.repo }}/${{ steps.release-vars.outputs.name }}:${{ steps.release-vars.outputs.tag }}
             ghcr.io/${{ steps.release-vars.outputs.repo }}/${{ steps.release-vars.outputs.name }}:latest

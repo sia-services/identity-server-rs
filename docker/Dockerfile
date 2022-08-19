@@ -1,4 +1,4 @@
-FROM debian:bullseye-slim AS runtime
+FROM debian:bullseye-slim
 
 ARG APP=/usr/local/bin
 
