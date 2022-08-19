@@ -51,7 +51,7 @@ impl Identity {
         self.verify_password(&user.salt, &user.password, attempted_password)?;
 
         let hours = {
-            let now = NaiveDate::now();
+            let now = Utc::now().date_naive();
             let expiration_date = user.password_expiration_date;
             let duration = expiration_date.signed_duration_since(now);
             duration.num_hours()
