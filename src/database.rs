@@ -47,6 +47,6 @@ pub async fn load_user_roles(
 
     let result = client.query(&stmt, &[&personnel_nr]).await?;
 
-    let roles = result.map(|r| r.into());
+    let roles = result.iter().map(|r| r.into()).collect();
     Ok(roles)
 }

@@ -3,7 +3,7 @@ mod authorization;
 mod service;
 
 use chrono::{DateTime, Utc};
-use std::sync::{Arc, Mutex, RwLock};
+use std::sync::{Arc, RwLock};
 use uuid::Uuid;
 
 #[derive(Clone)]
@@ -42,8 +42,6 @@ impl AuthenticattionInfoContext {
         Self { auth_info }
     }
 }
-
-use std::{rc::Rc, sync::Arc};
 
 pub use auth_token::AuthTokenMiddlewareFactory;
 pub use authorization::Authorization;
