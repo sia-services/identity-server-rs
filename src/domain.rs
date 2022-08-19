@@ -9,12 +9,12 @@ pub struct User {
     #[serde(skip_serializing)]
     pub password: String,
     #[serde(skip_serializing)]
-    pub password_expiration_date: chrono::Date<chrono::Utc>,
+    pub password_expiration_date: chrono::DateTime<chrono::Utc>,
     pub username: String,
     #[serde(skip_serializing)]
     pub account_disabled: bool,
     #[serde(skip_serializing)]
-    pub date_dismiss: Option<chrono::Date<chrono::Utc>>,
+    pub date_dismiss: Option<chrono::DateTime<chrono::Utc>>,
     pub telefon: Option<String>,
     pub email: Option<String>,
 }
