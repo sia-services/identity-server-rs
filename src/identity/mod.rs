@@ -4,7 +4,10 @@ mod service;
 
 use chrono::{DateTime, Utc};
 use serde::Serialize;
-use std::sync::{Arc, Rc, RwLock};
+use std::{
+    rc::Rc,
+    sync::{Arc, RwLock},
+};
 use uuid::Uuid;
 
 #[derive(Clone)]
@@ -19,8 +22,8 @@ pub struct AuthenticattionInfoContext {
 
 #[derive(Serialize)]
 pub struct AuthenticatedUser {
-    user: domain::User,
-    roles: Vec<domain::UserRole>,
+    user: crate::domain::User,
+    roles: Vec<crate::domain::UserRole>,
     authenticated: RwLock<DateTime<Utc>>,
 }
 
