@@ -1,4 +1,4 @@
-use crate::database::{count_of_roles, find_user_by_name, load_user_roles};
+use crate::database::{count_of_roles, find_user_by_name, load_user_resources, load_user_roles};
 use crate::errors::DatabaseError;
 use crate::identity::{AuthTokenContext, AuthenticattionInfoContext, Authorization, Identity};
 
@@ -57,9 +57,12 @@ pub async fn login(
 
     identity.verify_authentication(&user, &credentials.password)?;
 
-    let user_roles = load_user_roles(&client, personnel_nr).await?;
+    let roles = load_user_roles(&client, personnel_nr);
+    let resources = load_user_resources(&client, personnel_nr);
 
-    let response = identity.authenticate(user, user_roles)?;
+    let (roles, resources) = join!(roles, resources).await?;
+
+    let response = identity.authenticate(user, roles, resources)?;
 
     Ok(web::Json(response))
 }

@@ -36,6 +36,7 @@ impl Identity {
         &self,
         user: domain::User,
         roles: Vec<domain::UserRole>,
+        resources: Vec<domain::UserResource>,
     ) -> Result<AuthenticationResponse, actix_web::Error> {
         // guard hashmap for write
         let mut guard = self.users_by_personnel_nr.lock().unwrap();
@@ -56,6 +57,7 @@ impl Identity {
         let auth_info = Arc::new(AuthenticatedUser {
             user,
             roles,
+            resources,
             authenticated: RwLock::new(Utc::now()),
         });
 

@@ -37,9 +37,9 @@ impl From<Row> for User {
 
 #[derive(Serialize)]
 pub struct UserRole {
+    #[serde(skip_serializing)]
     pub role_id: i16,
     pub role_name: String,
-    pub role_group_id: String,
 }
 
 impl From<Row> for UserRole {
@@ -47,7 +47,24 @@ impl From<Row> for UserRole {
         Self {
             role_id: row.get(0),
             role_name: row.get(1),
-            role_group_id: row.get(2),
+        }
+    }
+}
+
+#[derive(Serialize)]
+pub struct UserResource {
+    #[serde(skip_serializing)]
+    pub resource_id: i16,
+    pub resource_name: String,
+    pub with_write_or_execution: bool,
+}
+
+impl From<Row> for UserResource {
+    fn from(row: Row) -> Self {
+        Self {
+            resource_id: row.get(0),
+            resource_name: row.get(1),
+            with_write_or_execution: row.get(2),
         }
     }
 }

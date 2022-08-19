@@ -37,10 +37,22 @@ pub async fn load_user_roles(
     personnel_nr: i16,
 ) -> Result<Vec<domain::UserRole>, DatabaseError> {
     let stmt = client
-        .prepare(
-            "SELECT role_id, role_name, role_group_id \
-        FROM security.v_user_roles WHERE personnel_nr = $1",
-        )
+        .prepare("SELECT role_id, role_name FROM security.v_user_roles WHERE personnel_nr = $1")
+        .await
+        .unwrap();
+
+    let result = client.query(&stmt, &[&personnel_nr]).await?;
+
+    let roles = result.into_iter().map(|r| r.into()).collect();
+    Ok(roles)
+}
+
+pub async fn load_user_resources(
+    client: &Client,
+    personnel_nr: i16,
+) -> Result<Vec<domain::UserResource>, DatabaseError> {
+    let stmt = client
+        .prepare("SELECT resource_id, resource_name, with_write_or_execution FROM security.v_user_resources WHERE personnel_nr = $1")
         .await
         .unwrap();
 
