@@ -1,7 +1,7 @@
 use serde::Serialize;
 use tokio_postgres::Row;
 
-#[derive(Debug, Serialize)]
+#[derive(Serialize)]
 pub struct User {
     pub personnel_nr: i16,
     #[serde(skip_serializing)]
@@ -31,6 +31,23 @@ impl From<Row> for User {
             date_dismiss: row.get(6),
             telefon: row.get(7),
             email: row.get(8),
+        }
+    }
+}
+
+#[derive(Serialize)]
+pub struct UserRole {
+    pub role_id: i16,
+    pub role_name: String,
+    pub role_group_id: String,
+}
+
+impl From<Row> for UserRole {
+    fn from(row: Row) -> Self {
+        Self {
+            role_id: row.get(0),
+            role_name: row.get(1),
+            role_group_id: row.get(2),
         }
     }
 }

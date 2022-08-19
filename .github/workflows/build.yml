@@ -26,6 +26,7 @@ jobs:
       - name: Build project
         run: |
           cargo build --release --all-features
+          strip target/release/identity-server-rs
       - name: Create release tag-name
         id: release-vars
         run: |

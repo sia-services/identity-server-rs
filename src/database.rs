@@ -1,4 +1,5 @@
 use deadpool_postgres::Client;
+use tokio_postgres::GenericClient;
 
 use crate::{domain, errors::DatabaseError};
 
@@ -30,4 +31,22 @@ pub async fn find_user_by_name(
 
     let user = result.map(|r| r.into());
     Ok(user)
+}
+
+pub async fn load_user_roles(
+    client: &Client,
+    personnel_nr: i16,
+) -> Result<Vec<domain::UserRole>, DatabaseError> {
+    let stmt = client
+        .prepare(
+            "SELECT role_id, role_name, role_group_id \
+        FROM security.v_user_roles WHERE personnel_nr = $1",
+        )
+        .await
+        .unwrap();
+
+    let result = client.query(&stmt, &[&personnel_nr]).await?;
+
+    let roles = result.map(|r| r.into());
+    Ok(roles)
 }

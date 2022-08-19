@@ -1,4 +1,4 @@
-use crate::database::{count_of_roles, find_user_by_name};
+use crate::database::{count_of_roles, find_user_by_name, load_user_roles};
 use crate::errors::DatabaseError;
 use crate::identity::{AuthTokenContext, AuthenticattionInfoContext, Authorization, Identity};
 
@@ -49,9 +49,17 @@ pub async fn login(
         "Utilizatorul cu acest nume nu este autentificat",
     ))?;
 
-    log::info!("authenticated user: {} / {}", &user.username, &user.personnel_nr);
+    log::info!(
+        "authenticated user: {} / {}",
+        &user.username,
+        &user.personnel_nr
+    );
 
-    let response = identity.authenticate(user, &credentials.password)?;
+    identity.verify_authentication(user, &credentials.password)?;
+
+    let user_roles = load_user_roles(&client, personnel_nr).await?;
+
+    let response = identity.authenticate(user, user_roles)?;
 
     Ok(web::Json(response))
 }

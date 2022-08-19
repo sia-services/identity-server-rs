@@ -2,6 +2,10 @@ mod auth_token;
 mod authorization;
 mod service;
 
+use chrono::{DateTime, Utc};
+use std::sync::{Arc, Mutex, RwLock};
+use uuid::Uuid;
+
 #[derive(Clone)]
 pub struct AuthTokenContext {
     pub token: Rc<String>,
@@ -10,6 +14,19 @@ pub struct AuthTokenContext {
 #[derive(Clone)]
 pub struct AuthenticattionInfoContext {
     pub auth_info: Arc<AuthenticatedUser>,
+}
+
+#[derive(Serialize)]
+pub struct AuthenticatedUser {
+    user: domain::User,
+    roles: Vec<domain::UserRole>,
+    authenticated: RwLock<DateTime<Utc>>,
+}
+
+#[derive(Serialize, Clone)]
+pub struct AuthenticationResponse {
+    token: Uuid,
+    auth_info: Arc<AuthenticatedUser>,
 }
 
 impl AuthTokenContext {

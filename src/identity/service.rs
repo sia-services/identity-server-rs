@@ -6,21 +6,11 @@ use std::collections::HashMap;
 use std::sync::{Arc, Mutex, RwLock};
 use uuid::Uuid;
 
-#[derive(Serialize)]
-pub struct AuthenticatedUser {
-    user: domain::User,
-    authenticated: RwLock<DateTime<Utc>>,
-}
-
-#[derive(Serialize, Clone)]
-pub struct AuthenticationResponse {
-    token: Uuid,
-    auth_info: Arc<AuthenticatedUser>,
-}
-
 use base64::{decode, encode};
 use ring::{digest, pbkdf2};
 use std::num::NonZeroU32;
+
+use super::{AuthenticatedUser, AuthenticationResponse};
 
 #[derive(Clone)]
 pub struct Identity {
@@ -46,38 +36,13 @@ impl Identity {
     pub fn authenticate(
         &self,
         user: domain::User,
-        attempted_password: &str,
+        roles: Vec<domain::UserRole>,
     ) -> Result<AuthenticationResponse, actix_web::Error> {
-        self.verify_password(&user.salt, &user.password, attempted_password)?;
-
-        let hours = {
-            let now = Utc::now().date_naive();
-            let expiration_date = user.password_expiration_date;
-            let duration = expiration_date.signed_duration_since(now);
-            duration.num_hours()
-        };
-        if hours < 0 {
-            return Err(actix_web::error::ErrorUnauthorized(
-                "Parola este învechita; Contactați administratorul",
-            ));
-        }
-
-        if user.account_disabled {
-            return Err(actix_web::error::ErrorUnauthorized(
-                "Utilizator dezactivat; Contactați administratorul",
-            ));
-        }
-
-        if user.date_dismiss.is_some() {
-            return Err(actix_web::error::ErrorUnauthorized(
-                "Esti concediat! Contactați Departamentul de Resurse Umane",
-            ));
-        }
-
         // guard hashmap for write
         let mut guard = self.users_by_personnel_nr.lock().unwrap();
         if let Some(auth_response) = guard.get_mut(&user.personnel_nr) {
             // if auth record exists, renew auth timestamp
+            // TODO: may be renew roles ??
             {
                 let mut guard = auth_response.auth_info.authenticated.write().unwrap();
                 *guard = Utc::now();
@@ -91,6 +56,7 @@ impl Identity {
         let key = user.personnel_nr;
         let auth_info = Arc::new(AuthenticatedUser {
             user,
+            roles,
             authenticated: RwLock::new(Utc::now()),
         });
 
@@ -159,6 +125,39 @@ impl Identity {
             guard.remove(&personnel_nr).unwrap();
         }
 
+        Ok(())
+    }
+
+    pub fn verify_authentication(
+        &self,
+        user: domain::User,
+        attempted_password: &str,
+    ) -> Result<(), actix_web::Error> {
+        self.verify_password(&user.salt, &user.password, attempted_password)?;
+
+        let hours = {
+            let now = Utc::now().date_naive();
+            let expiration_date = user.password_expiration_date;
+            let duration = expiration_date.signed_duration_since(now);
+            duration.num_hours()
+        };
+        if hours < 0 {
+            return Err(actix_web::error::ErrorUnauthorized(
+                "Parola este învechita; Contactați administratorul",
+            ));
+        }
+
+        if user.account_disabled {
+            return Err(actix_web::error::ErrorUnauthorized(
+                "Utilizator dezactivat; Contactați administratorul",
+            ));
+        }
+
+        if user.date_dismiss.is_some() {
+            return Err(actix_web::error::ErrorUnauthorized(
+                "Ești concediat! Contactați Departamentul de Resurse Umane",
+            ));
+        }
         Ok(())
     }
 
