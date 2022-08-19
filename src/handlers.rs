@@ -1,6 +1,6 @@
 use crate::database::{count_of_roles, find_user_by_name};
 use crate::errors::DatabaseError;
-use crate::identity::{AuthTokenContext, &AuthenticattionInfoContext, Authorization, Identity};
+use crate::identity::{AuthTokenContext, AuthenticattionInfoContext, Authorization, Identity};
 
 use actix_web::{get, post, web, HttpResponse, Responder, Result};
 use deadpool_postgres::Pool;
