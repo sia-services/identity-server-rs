@@ -45,7 +45,7 @@ impl Identity {
 
     pub fn authenticate(
         &self,
-        user: User,
+        user: domain::User,
         attempted_password: &str,
     ) -> Result<AuthenticationResponse, actix_web::Error> {
         self.verify_password(&user.salt, &user.password, attempted_password)?;

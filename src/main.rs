@@ -5,8 +5,7 @@ mod handlers;
 mod identity;
 mod setup;
 
-use actix_web::middleware::Logger;
-use actix_web::{middleware, web, App, HttpServer};
+use actix_web::{middleware::Logger, web, App, HttpServer};
 use dotenv::dotenv;
 
 #[actix_web::main]

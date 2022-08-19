@@ -2,7 +2,7 @@ use crate::database::{count_of_roles, find_user_by_name};
 use crate::errors::DatabaseError;
 use crate::identity::{AuthTokenContext, AuthenticattionInfoContext, Authorization, Identity};
 
-use actix_web::{get, post, web, HttpResponse, Result};
+use actix_web::{get, post, web, HttpResponse, Responder, Result};
 use deadpool_postgres::Pool;
 use serde::Deserialize;
 
@@ -38,7 +38,7 @@ pub async fn login(
     identity: web::Data<Identity>,
     credentials: web::Json<UsernamePasswordCredentials>,
 ) -> Result<impl Responder> {
-    let client: Client = db_pool.get().await.map_err(DatabaseError::PoolError)?;
+    let client = db_pool.get().await.map_err(DatabaseError::PoolError)?;
 
     let personnel_nr: i16 = FromStr::from_str(&credentials.username)
         .map_err(|_| actix_web::error::ErrorBadRequest("username must be personnel nr: number"))?;
@@ -72,7 +72,7 @@ pub async fn auth_info(
 #[post("/logout")]
 pub async fn logout(
     identity: web::Data<Identity>,
-    token_context: Option<ReqData<AuthTokenContext>>,
+    token_context: Option<web::ReqData<AuthTokenContext>>,
 ) -> Result<HttpResponse> {
     if token_context.is_none() {
         return Ok(HttpResponse::Ok().finish());
