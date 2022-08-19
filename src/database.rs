@@ -18,7 +18,8 @@ pub async fn find_user_by_name(
 ) -> Result<Option<domain::User>, DatabaseError> {
     let stmt = client
         .prepare(
-            "SELECT personnel_nr, salt, password, username, email \
+            "SELECT personnel_nr, salt, password, password_expiration_date, \
+            username, account_disabled, date_dismiss, telefon, email \
         FROM security.users \
         WHERE personnel_nr = $1",
         )

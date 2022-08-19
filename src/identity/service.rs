@@ -50,6 +50,30 @@ impl Identity {
     ) -> Result<AuthenticationResponse, actix_web::Error> {
         self.verify_password(&user.salt, &user.password, attempted_password)?;
 
+        let hours = {
+            let now = Utc::now();
+            let expiration_date = user.password_expiration_date;
+            let duration = expiration_date.signed_duration_since(now);
+            duration.num_hours()
+        };
+        if hours < 0 {
+            Err(actix_web::error::ErrorUnauthorized(
+                "Parola este învechita; Contactați administratorul",
+            ))
+        }
+
+        if user.account_disabled {
+            Err(actix_web::error::ErrorUnauthorized(
+                "Utilizator dezactivat; Contactați administratorul",
+            ))
+        }
+
+        if user.date_dismiss.is_none() {
+            Err(actix_web::error::ErrorUnauthorized(
+                "Esti concediat! Contactați Departamentul de Resurse Umane",
+            ))
+        }
+
         // guard hashmap for write
         let mut guard = self.users_by_personnel_nr.lock().unwrap();
         if let Some(auth_response) = guard.get_mut(&user.personnel_nr) {
