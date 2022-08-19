@@ -8,6 +8,8 @@ mod setup;
 use actix_web::{middleware::Logger, web, App, HttpServer};
 use dotenv::dotenv;
 
+// TODO: need use variables in testing/test-remote.http
+
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
     // std::env::set_var("RUST_LOG", "actix_web=debug");
