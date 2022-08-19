@@ -1,4 +1,5 @@
 mod database;
+mod domain;
 mod errors;
 mod handlers;
 mod setup;
