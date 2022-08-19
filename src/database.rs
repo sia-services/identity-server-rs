@@ -25,11 +25,7 @@ pub async fn find_user_by_name(
         .await
         .unwrap();
 
-    log::info!("authentication statement prepared");
-
     let result = client.query_opt(&stmt, &[&personnel_nr]).await?;
-
-    log::info!("authentication result retrieved");
 
     let user = result.map(|r| r.into());
     Ok(user)
