@@ -1,6 +1,6 @@
 use deadpool_postgres::Client;
 
-use crate::{errors::DatabaseError, domain};
+use crate::{domain, errors::DatabaseError};
 
 pub async fn count_of_roles(client: &Client) -> Result<i64, DatabaseError> {
     let stmt = client
@@ -14,8 +14,8 @@ pub async fn count_of_roles(client: &Client) -> Result<i64, DatabaseError> {
 
 pub async fn find_user_by_name(
     client: &Client,
-    username: &str,
-) -> Result<Option<domain::User>, IdentityServerError> {
+    personnel_nr: i16,
+) -> Result<Option<domain::User>, DatabaseError> {
     let stmt = client
         .prepare(
             "SELECT personnel_nr, salt, password, username, email \
@@ -26,10 +26,6 @@ pub async fn find_user_by_name(
         .unwrap();
 
     log::info!("authentication statement prepared");
-
-    let personnel_nr: i16 = FromStr::from_str(username).map_err(|_| {
-        IdentityServerError::validationError("username must be personnel nr: number")
-    })?;
 
     let result = client.query_opt(&stmt, &[&personnel_nr]).await?;
 

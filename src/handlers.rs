@@ -15,6 +15,8 @@ pub async fn hello(db_pool: web::Data<Pool>) -> Result<HttpResponse> {
     Ok(HttpResponse::Ok().body(response))
 }
 
+use actix_web::dev::HttpServiceFactory;
+
 pub fn auth_scope() -> impl HttpServiceFactory {
     web::scope("/auth")
         .wrap(Authorization::enable())
@@ -27,17 +29,20 @@ pub struct UsernamePasswordCredentials {
     password: String,
 }
 
+use std::str::FromStr;
+
 #[post("/login")]
 pub async fn login(
     db_pool: web::Data<Pool>,
     identity: web::Data<Identity>,
     credentials: web::Json<UsernamePasswordCredentials>,
 ) -> Result<impl Responder> {
-    let client: Client = db_pool
-        .get()
-        .await
-        .map_err(IdentityServerError::PoolError)?;
-    let maybe_user = find_user_by_name(&client, &credentials.username).await?;
+    let client: Client = db_pool.get().await.map_err(DatabaseError::PoolError)?;
+
+    let personnel_nr: i16 = FromStr::from_str(&credentials.username)
+        .map_err(|_| actix_web::error::ErrorBadRequest("username must be personnel nr: number"))?;
+
+    let maybe_user = find_user_by_name(&client, personnel_nr).await?;
 
     let user = maybe_user.ok_or(actix_web::error::ErrorUnauthorized(
         "Utilizatorul cu acest nume nu este autentificat",
