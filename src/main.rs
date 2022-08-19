@@ -15,7 +15,7 @@ async fn main() -> std::io::Result<()> {
     env_logger::init_from_env(::env_logger::Env::default().default_filter_or("info"));
     dotenv().ok();
 
-    let config_ = ::configConfig::builder()
+    let config_ = ::config::Config::builder()
         .add_source(::config::Environment::default())
         .build()
         .unwrap();

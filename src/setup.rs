@@ -37,9 +37,9 @@ pub fn ssl(config: &SSLConfig) -> SslAcceptorBuilder {
 
 use postgres_openssl::MakeTlsConnector;
 
-pub fn create_db_pool(pg: deadpool_postgres::Config) -> Pool {
+pub fn create_db_pool(pg: deadpool_postgres::Config) -> deadpool_postgres::Pool {
     let mut builder = SslConnector::builder(SslMethod::tls()).unwrap();
-    builder.set_verify(SslVerifyMode::NONE).unwrap();
+    builder.set_verify(SslVerifyMode::NONE);
     let connector = MakeTlsConnector::new(builder.build());
     pg.create_pool(None, connector).unwrap()
 }
