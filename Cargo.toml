@@ -53,7 +53,7 @@ opt-level = 0
 opt-level = 3
 lto = true        # Enable link Time Optimization
 panic = 'abort'   # Abort on panic
-codegen-units = 2 # Parallel Codegeneration (default: 16)
+codegen-units = 4 # Parallel Codegeneration (default: 16)
 
 ## build for release: cargo build --release
 ## for full minification (strip debug symbols):
