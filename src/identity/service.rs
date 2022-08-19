@@ -68,7 +68,7 @@ impl Identity {
             ));
         }
 
-        if user.date_dismiss.is_none() {
+        if user.date_dismiss.is_some() {
             return Err(actix_web::error::ErrorUnauthorized(
                 "Esti concediat! Contactați Departamentul de Resurse Umane",
             ));
