@@ -50,5 +50,3 @@ impl AuthenticattionInfoContext {
 pub use auth_token::AuthTokenMiddlewareFactory;
 pub use authorization::Authorization;
 pub use service::Identity;
-
-use self::service::AuthenticatedUser;
