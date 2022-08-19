@@ -4,6 +4,7 @@ use crate::identity::{AuthTokenContext, AuthenticattionInfoContext, Authorizatio
 
 use actix_web::{get, post, web, HttpResponse, Responder, Result};
 use deadpool_postgres::Pool;
+use futures_util::try_join;
 use serde::Deserialize;
 
 #[get("/")]
@@ -60,7 +61,7 @@ pub async fn login(
     let roles = load_user_roles(&client, personnel_nr);
     let resources = load_user_resources(&client, personnel_nr);
 
-    let (roles, resources) = join!(roles, resources).await?;
+    let (roles, resources) = try_join!(roles, resources).await?;
 
     let response = identity.authenticate(user, roles, resources)?;
 
