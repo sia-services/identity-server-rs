@@ -1,5 +1,4 @@
 use deadpool_postgres::Client;
-use tokio_postgres::GenericClient;
 
 use crate::{domain, errors::DatabaseError};
 

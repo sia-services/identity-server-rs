@@ -129,7 +129,7 @@ impl Identity {
 
     pub fn verify_authentication(
         &self,
-        user: domain::User,
+        user: &domain::User,
         attempted_password: &str,
     ) -> Result<(), actix_web::Error> {
         self.verify_password(&user.salt, &user.password, attempted_password)?;

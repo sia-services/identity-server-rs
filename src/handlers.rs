@@ -55,7 +55,7 @@ pub async fn login(
         &user.personnel_nr
     );
 
-    identity.verify_authentication(user, &credentials.password)?;
+    identity.verify_authentication(&user, &credentials.password)?;
 
     let user_roles = load_user_roles(&client, personnel_nr).await?;
 
