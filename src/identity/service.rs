@@ -57,21 +57,21 @@ impl Identity {
             duration.num_hours()
         };
         if hours < 0 {
-            Err(actix_web::error::ErrorUnauthorized(
+            return Err(actix_web::error::ErrorUnauthorized(
                 "Parola este învechita; Contactați administratorul",
-            ))
+            ));
         }
 
         if user.account_disabled {
-            Err(actix_web::error::ErrorUnauthorized(
+            return Err(actix_web::error::ErrorUnauthorized(
                 "Utilizator dezactivat; Contactați administratorul",
-            ))
+            ));
         }
 
         if user.date_dismiss.is_none() {
-            Err(actix_web::error::ErrorUnauthorized(
+            return Err(actix_web::error::ErrorUnauthorized(
                 "Esti concediat! Contactați Departamentul de Resurse Umane",
-            ))
+            ));
         }
 
         // guard hashmap for write
