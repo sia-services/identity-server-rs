@@ -2,6 +2,7 @@ mod database;
 mod domain;
 mod errors;
 mod handlers;
+mod identity;
 mod setup;
 
 use actix_web::middleware::Logger;
@@ -25,6 +26,8 @@ async fn main() -> std::io::Result<()> {
     let ssl_builder = setup::ssl(&config.ssl);
 
     let pool = setup::create_db_pool(config.pg);
+    let identity_service = identity::Identity::new();
+    let auth_token_middleware_factory = identity::AuthTokenMiddlewareFactory::new();
 
     log::info!("Server running at http://{}/", config.server_addr);
 
@@ -32,8 +35,13 @@ async fn main() -> std::io::Result<()> {
         let logger = Logger::default();
         App::new()
             .app_data(web::Data::new(pool.clone()))
+            .app_data(web::Data::new(identity_service.clone()))
             .wrap(logger)
+            .wrap(auth_token_middleware_factory.clone())
             .service(handlers::hello)
+            .service(handlers::login)
+            .service(handlers::logout)
+            .service(handlers::auth_scope())
     })
     .bind_openssl(config.server_addr.clone(), ssl_builder)?
     .run();
