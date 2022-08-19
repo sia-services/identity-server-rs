@@ -1,7 +1,6 @@
 use crate::domain;
 
 use chrono::{DateTime, NaiveDate, Utc};
-use serde::Serialize;
 use std::collections::HashMap;
 use std::sync::{Arc, Mutex, RwLock};
 use uuid::Uuid;
