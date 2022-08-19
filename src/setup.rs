@@ -26,13 +26,6 @@ pub fn ssl(config: &SSLConfig) -> SslAcceptorBuilder {
     let keyfilepath = keypath.join(&config.keyfile);
     let certfilepath = keypath.join(&config.certfile);
 
-    log::info!(
-        "keypath: {}, keyfile: {}, certfile: {}",
-        &config.path,
-        &config.keyfile,
-        &config.certfile
-    );
-
     let mut builder = SslAcceptor::mozilla_intermediate(SslMethod::tls()).unwrap();
 
     builder
