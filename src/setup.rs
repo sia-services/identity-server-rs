@@ -21,12 +21,10 @@ pub struct SSLConfig {
 /// load ssl keys
 // to create a self-signed temporary cert for testing:
 // `openssl req -x509 -newkey rsa:4096 -nodes -keyout key.pem -out cert.pem -days 365 -subj '/CN=localhost'`
-pub fn ssl(http: &SSLConfig) -> SslAcceptorBuilder {
-    let ssl = &http.ssl;
-
-    let keypath = Path::new(&ssl.path);
-    let keyfilepath = keypath.join(&ssl.keyfile);
-    let certfilepath = keypath.join(&ssl.certfile);
+pub fn ssl(config: &SSLConfig) -> SslAcceptorBuilder {
+    let keypath = Path::new(&config.path);
+    let keyfilepath = keypath.join(&config.keyfile);
+    let certfilepath = keypath.join(&config.certfile);
 
     let mut builder = SslAcceptor::mozilla_intermediate(SslMethod::tls()).unwrap();
 
@@ -41,14 +39,7 @@ use postgres_openssl::MakeTlsConnector;
 
 pub fn create_db_pool(pg: deadpool_postgres::Config) -> Pool {
     let mut builder = SslConnector::builder(SslMethod::tls()).unwrap();
-    builder.set_verify(SslVerifyMode::NONE)?;
+    builder.set_verify(SslVerifyMode::NONE).unwrap();
     let connector = MakeTlsConnector::new(builder.build());
-
-    let connector = native_tls::TlsConnector::builder()
-        .danger_accept_invalid_certs(true)
-        .build()
-        .unwrap();
-    let connector = MakeTlsConnector::new(connector);
-
     pg.create_pool(None, connector).unwrap()
 }

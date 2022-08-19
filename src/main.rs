@@ -3,6 +3,7 @@ mod errors;
 mod handlers;
 mod setup;
 
+use actix_web::middleware::Logger;
 use actix_web::{middleware, web, App, HttpServer};
 use dotenv::dotenv;
 
@@ -14,7 +15,7 @@ async fn main() -> std::io::Result<()> {
     env_logger::init_from_env(::env_logger::Env::default().default_filter_or("info"));
     dotenv().ok();
 
-    let config_ = Config::builder()
+    let config_ = ::configConfig::builder()
         .add_source(::config::Environment::default())
         .build()
         .unwrap();
