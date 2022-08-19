@@ -14,7 +14,7 @@ pub struct User {
     #[serde(skip_serializing)]
     pub account_disabled: bool,
     #[serde(skip_serializing)]
-    pub date_dismiss: Option<chrono::NaiveDate,
+    pub date_dismiss: Option<chrono::NaiveDate>,
     pub telefon: Option<String>,
     pub email: Option<String>,
 }
