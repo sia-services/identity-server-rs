@@ -23,6 +23,19 @@ jobs:
             target/
           key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
           restore-keys: ${{ runner.os }}-cargo-
+      - name: Install cargo check tools
+        run: |
+          cargo install --locked cargo-deny || true
+          cargo install --locked cargo-outdated || true
+          cargo install --locked cargo-udeps || true
+          cargo install --locked cargo-audit || true
+      - name: Check
+        run: |
+          cargo deny check
+          cargo outdated
+          cargo udeps
+          rm -rf ~/.cargo/advisory-db
+          cargo audit
       - name: Build project
         run: |
           cargo build --release --all-features
