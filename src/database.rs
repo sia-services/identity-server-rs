@@ -1,4 +1,4 @@
-use deadpool_postgres::{Client, Pool};
+use deadpool_postgres::Client;
 
 use crate::errors::DatabaseError;
 
