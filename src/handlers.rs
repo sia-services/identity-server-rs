@@ -6,7 +6,7 @@ use crate::identity::{AuthTokenContext, AuthenticattionInfoContext, Authorizatio
 use actix_web::{get, post, web, HttpResponse, Responder, Result};
 use deadpool_postgres::Pool;
 use futures_util::try_join;
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 
 use std::sync::Arc;
 

@@ -1,6 +1,8 @@
+use serde::Serialize;
+
 #[derive(Serialize)]
 pub struct BooleanResponse {
-    pub result: boolean,
+    pub result: bool,
 }
 
 pub const TRUE_RESPONSE: BooleanResponse = BooleanResponse::construct(true);
