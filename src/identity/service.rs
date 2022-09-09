@@ -56,8 +56,8 @@ impl Identity {
         let key = user.personnel_nr;
         let auth_info = Arc::new(AuthenticatedUser {
             user,
-            roles,
-            resources,
+            roles: Arc::new(roles),
+            resources: Arc::new(resources),
             authenticated: RwLock::new(Utc::now()),
         });
 

@@ -23,8 +23,8 @@ pub struct AuthenticattionInfoContext {
 #[derive(Serialize)]
 pub struct AuthenticatedUser {
     user: crate::domain::User,
-    roles: Vec<crate::domain::UserRole>,
-    resources: Vec<crate::domain::UserResource>,
+    roles: Arc<Vec<crate::domain::UserRole>>,
+    resources: Arc<Vec<crate::domain::UserResource>>,
     authenticated: RwLock<DateTime<Utc>>,
 }
 

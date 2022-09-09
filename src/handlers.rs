@@ -8,6 +8,8 @@ use deadpool_postgres::Pool;
 use futures_util::try_join;
 use serde::Deserialize;
 
+use std::sync::Arc;
+
 #[get("/")]
 pub async fn hello(db_pool: web::Data<Pool>) -> Result<HttpResponse> {
     let client = db_pool.get().await.map_err(DatabaseError::PoolError)?;
@@ -24,6 +26,8 @@ pub fn auth_scope() -> impl HttpServiceFactory {
     web::scope("/auth")
         .wrap(Authorization::enable())
         .service(auth_info)
+        .service(auth_permissions)
+        .service(auth_test)
 }
 
 #[derive(Deserialize)]
@@ -69,34 +73,51 @@ pub async fn login(
     Ok(web::Json(response))
 }
 
-#[derive(Debug, Deserialize)]
-pub enum AuthInfoResponseMode {
-    Full,
-    Roles,
-}
-
-#[derive(Debug, Deserialize)]
-pub struct AuthInfoRequest {
-    mode: Option<AuthInfoResponseMode>,
-}
-
 #[get("/info")]
 pub async fn auth_info(
     auth_context: Option<web::ReqData<AuthenticattionInfoContext>>,
-    req: web::Query<AuthInfoRequest>,
 ) -> Result<impl Responder> {
     let auth_context = auth_context.ok_or(actix_web::error::ErrorInternalServerError(
         "Authentication info context not found in application",
     ))?;
 
-    let response_mode = req.mode;
-    match response_mode {
-        None => Ok(web::Json(TRUE_RESPONSE)),
-        Some(mode) => {
-            let auth_user = auth_context.auth_info.clone();
-            Ok(web::Json(auth_user))
-        }
-    }
+    let auth_user = auth_context.auth_info.clone();
+
+    Ok(web::Json(auth_user))
+}
+
+#[derive(Serialize)]
+pub struct AuthenticationPermissions {
+    roles: Arc<Vec<crate::domain::UserRole>>,
+    resources: Arc<Vec<crate::domain::UserResource>>,
+}
+
+#[get("/permissions")]
+pub async fn auth_permissions(
+    auth_context: Option<web::ReqData<AuthenticattionInfoContext>>,
+) -> Result<impl Responder> {
+    let auth_context = auth_context.ok_or(actix_web::error::ErrorInternalServerError(
+        "Authentication info context not found in application",
+    ))?;
+
+    let auth_user = auth_context.auth_info.clone();
+    let permissions = AuthenticationPermissions {
+        roles: auth_user.roles.clone(),
+        resources: auth_user.resources.clone(),
+    };
+
+    Ok(web::Json(permissions))
+}
+
+#[get("/test")]
+pub async fn auth_test(
+    auth_context: Option<web::ReqData<AuthenticattionInfoContext>>,
+) -> Result<impl Responder> {
+    let auth_context = auth_context.ok_or(actix_web::error::ErrorInternalServerError(
+        "Authentication info context not found in application",
+    ))?;
+
+    Ok(web::Json(TRUE_RESPONSE))
 }
 
 #[post("/logout")]
