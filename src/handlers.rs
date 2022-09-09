@@ -90,7 +90,7 @@ pub async fn auth_info(
 
     let response_mode = req.mode;
     match response_mode {
-        None => "OK".to_string(),
+        None => Ok("OK".to_string()),
         Some(mode) => {
             let auth_user = auth_context.auth_info.clone();
             Ok(web::Json(auth_user))
