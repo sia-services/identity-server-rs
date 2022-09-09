@@ -68,17 +68,34 @@ pub async fn login(
     Ok(web::Json(response))
 }
 
+#[derive(Debug, Deserialize)]
+pub enum AuthInfoResponseMode {
+    Full,
+    Roles,
+}
+
+#[derive(Debug, Deserialize)]
+pub struct AuthInfoRequest {
+    mode: Option<AuthInfoResponseMode>,
+}
+
 #[get("/info")]
 pub async fn auth_info(
     auth_context: Option<web::ReqData<AuthenticattionInfoContext>>,
+    req: web::Query<AuthInfoRequest>,
 ) -> Result<impl Responder> {
     let auth_context = auth_context.ok_or(actix_web::error::ErrorInternalServerError(
         "Authentication info context not found in application",
     ))?;
 
-    let auth_user = auth_context.auth_info.clone();
-
-    Ok(web::Json(auth_user))
+    let response_mode = req.mode;
+    match response_mode {
+        None => "OK".to_string(),
+        Some(mode) => {
+            let auth_user = auth_context.auth_info.clone();
+            Ok(web::Json(auth_user))
+        }
+    }
 }
 
 #[post("/logout")]
