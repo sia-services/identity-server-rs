@@ -1,5 +1,6 @@
 mod database;
 mod domain;
+mod dto;
 mod errors;
 mod handlers;
 mod identity;

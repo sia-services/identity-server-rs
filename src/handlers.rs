@@ -1,4 +1,5 @@
 use crate::database::{count_of_roles, find_user_by_name, load_user_resources, load_user_roles};
+use crate::dto::TRUE_RESPONSE;
 use crate::errors::DatabaseError;
 use crate::identity::{AuthTokenContext, AuthenticattionInfoContext, Authorization, Identity};
 
@@ -90,7 +91,7 @@ pub async fn auth_info(
 
     let response_mode = req.mode;
     match response_mode {
-        None => Ok("OK".to_string()),
+        None => Ok(web::Json(TRUE_RESPONSE)),
         Some(mode) => {
             let auth_user = auth_context.auth_info.clone();
             Ok(web::Json(auth_user))
