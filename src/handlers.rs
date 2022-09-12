@@ -87,7 +87,8 @@ pub async fn auth_info(
 }
 
 #[derive(Serialize)]
-pub struct AuthenticationPermissions {
+pub struct AuthenticationInfo {
+    personnel_nr: i16,
     roles: Arc<Vec<crate::domain::UserRole>>,
     resources: Arc<Vec<crate::domain::UserResource>>,
 }
@@ -101,12 +102,13 @@ pub async fn auth_permissions(
     ))?;
 
     let auth_user = auth_context.auth_info.clone();
-    let permissions = AuthenticationPermissions {
+    let info = AuthenticationInfo {
+        personnel_nr: auth_user.user.personnel_nr,
         roles: auth_user.roles.clone(),
         resources: auth_user.resources.clone(),
     };
 
-    Ok(web::Json(permissions))
+    Ok(web::Json(info))
 }
 
 #[get("/test")]
