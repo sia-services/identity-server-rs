@@ -52,6 +52,7 @@ opt-level = 0
 [profile.release]
 opt-level = 3
 lto = true        # Enable link Time Optimization
+debug = false     # disable debug info
 panic = 'abort'   # Abort on panic
 codegen-units = 2 # Parallel Codegeneration (default: 16)
 

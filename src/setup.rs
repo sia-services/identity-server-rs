@@ -5,7 +5,7 @@ use serde::Deserialize;
 use std::path::Path;
 
 #[derive(Debug, Default, Deserialize)]
-pub struct IdentityServerConfig {
+pub struct ServerConfig {
     pub server_addr: String,
     pub ssl: SSLConfig,
     pub pg: deadpool_postgres::Config,

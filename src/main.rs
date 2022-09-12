@@ -24,7 +24,7 @@ async fn main() -> std::io::Result<()> {
         .build()
         .unwrap();
 
-    let config: setup::IdentityServerConfig = config_.try_deserialize().unwrap();
+    let config: setup::ServerConfig = config_.try_deserialize().unwrap();
     let ssl_builder = setup::ssl(&config.ssl);
 
     let pool = setup::create_db_pool(config.pg);
