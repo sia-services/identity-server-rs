@@ -37,7 +37,6 @@ impl From<Row> for User {
 
 #[derive(Serialize)]
 pub struct UserRole {
-    #[serde(skip_serializing)]
     pub role_id: i16,
     pub role_name: String,
 }
@@ -53,7 +52,6 @@ impl From<Row> for UserRole {
 
 #[derive(Serialize)]
 pub struct UserResource {
-    #[serde(skip_serializing)]
     pub resource_id: i16,
     pub resource_name: String,
     pub with_write_or_execution: bool,
