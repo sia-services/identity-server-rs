@@ -1,6 +1,6 @@
 on: [push]
 
-name: Build & Pust to Docker
+name: Build & Push to Docker
 
 jobs:
   build_and_test:

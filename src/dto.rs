@@ -5,11 +5,15 @@ pub struct BooleanResponse {
     pub result: bool,
 }
 
-pub const TRUE_RESPONSE: BooleanResponse = BooleanResponse::construct(true);
-pub const FALSE_RESPONSE: BooleanResponse = BooleanResponse::construct(false);
+pub const TRUE_RESPONSE: BooleanResponse = BooleanResponse { result: true };
+pub const FALSE_RESPONSE: BooleanResponse = BooleanResponse { result: false };
 
 impl BooleanResponse {
-    pub const fn construct(result: bool) -> Self {
-        Self { result }
+    pub const fn of(result: bool) -> Self {
+        if result {
+            TRUE_RESPONSE
+        } else {
+            FALSE_RESPONSE
+        }
     }
 }
